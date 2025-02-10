@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:metromony/Crud.dart';
 import 'package:metromony/Home.dart';
 import 'package:metromony/LaunchPage.dart';
+import 'package:metromony/UserForm.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -13,6 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: Home(),
+      home: LaunchPage(),
     );
   }
 }

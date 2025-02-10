@@ -1,8 +1,12 @@
+import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:metromony/Crud.dart';
+import 'package:metromony/FavoriteList.dart';
 import 'package:metromony/UserForm.dart';
 import 'package:metromony/UserList.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:flashy_tab_bar2/flashy_tab_bar2.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,62 +17,98 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _currentIndex = 0;
-  User _user = User();
-  void navigateToForm() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => UserForm())
-    ).then((value) {
-      if (value != null) { // Check if the value is valid
-        _user.addUserInList(map: value); // Adding the new user to the list
-        setState(() { // Triggering setState to rebuild the widget tree
-          pages[0] = UserList(user: _user);
-        });
-      }
-    });
-  }
-
-
-
-  late List<Widget> pages; // Make pages a List<Widget>
-
+  NotchBottomBarController _controller = NotchBottomBarController();
+  late List<Widget> pages;
+  bool isSearchBar = false;
   @override
   void initState() {
     super.initState();
     pages = [
-      UserList(user: _user,),
-      Container(), // Placeholder to avoid index issues
+      UserList(search: isSearchBar,),
+      UserForm(),
+      Favoritelist()
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Matrimonial",
-          textAlign: TextAlign.center,
-          style: TextStyle(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(MediaQuery.of(context).size.height*0.08),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.teal.shade400,
+                Colors.teal.shade600,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(15),
+                bottomRight: Radius.circular(15),
+
+              )
+            ),
+            centerTitle: true,
+            title: Text(
+              "Matrimony",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(color: Colors.white , fontWeight:FontWeight.w700,fontSize: 25),
+            ),
+            backgroundColor: Colors.transparent,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: IconButton(onPressed: (){
+                    setState(() {
+                      isSearchBar = true;
+                    });
+                      pages[0] = UserList(search:isSearchBar);
+                }, icon: Icon(Icons.search_outlined,color: Colors.white),iconSize: 25,)
+              )
+            ],
+          ),
         ),
-        backgroundColor: Colors.red,
       ),
-      body: pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (int index) {
-          if (index == 1) {
-            navigateToForm();
-          } else {
-            setState(() {
-              _currentIndex = index;
-            });
-          }
-        },
-        items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person_add_rounded), label: "Add"),
-        ],
-      ),
+      body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.lightBlue.shade50, Colors.white60],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: pages[_currentIndex]),
+
+
+        bottomNavigationBar: FlashyTabBar(
+          animationCurve: Curves.linear,
+          selectedIndex: _currentIndex,
+          iconSize: 30,
+          showElevation: false, // use this to remove appBar's elevation
+          onItemSelected: (index) => setState(() {
+            _currentIndex = index;
+          }),
+          items: [
+            FlashyTabBarItem(
+              icon: Icon(Icons.home_filled),
+              title: Text('Home'),
+            ),
+            FlashyTabBarItem(
+              icon: Icon(Icons.person_add_rounded),
+              title: Text('Add'),
+            ),
+            FlashyTabBarItem(
+              icon: Icon(Icons.favorite_outline),
+              title: Text('Favorite'),
+            ),
+          ],
+        )
     );
   }
 
