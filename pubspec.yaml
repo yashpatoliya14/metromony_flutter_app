@@ -43,7 +43,7 @@ dependencies:
   intl: ^0.18.0
   sqflite:
   flashy_tab_bar2: ^0.0.10
-
+  shimmer: ^2.0.0
 
 dev_dependencies:
   flutter_test:
