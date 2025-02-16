@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
-
-import 'importFiles.dart';
+import 'package:metromony/User_Display/about_page.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../Utils/importFiles.dart';
 import 'package:intl/intl.dart';
 class UserForm extends StatefulWidget {
+  bool isAppBar;
   Map<String, dynamic>? userDetail;
-  UserForm({super.key, Map<String, dynamic>? userDetail}) {
+  UserForm({super.key, Map<String, dynamic>? userDetail,required bool this.isAppBar}) {
     this.userDetail = userDetail;
   }
   @override
@@ -14,7 +16,7 @@ class UserForm extends StatefulWidget {
 class _UserformState extends State<UserForm> {
   final GlobalKey<FormState> _formkey = GlobalKey();
 
-  //hobbies List
+  //region hobbies List
   final List<Map<String, dynamic>> hobbiesData = [
     {"name": "Cricket", "isChecked": false},
     {"name": "Reading", "isChecked": false},
@@ -46,12 +48,11 @@ class _UserformState extends State<UserForm> {
   //select variables
   int? _selectedRadio;
   String? _selectedCity;
-  DateTime? selectedDate = DateTime(2005,12,31);
+  DateTime? selectedDate = DateTime.now();
   bool isSelectedRadio = true;
   bool isSelectedCity = true;
   bool isSelectedHobbies = true;
   List<String>? selectedHobbies;
-  bool isAppBar = true;
 
   //errors variables
   String? firstNameError;
@@ -63,7 +64,6 @@ class _UserformState extends State<UserForm> {
   String? cityError;
   String? hobbiesError;
   String? genderError;
-
 
   //gender list
   List<String> gender = ["Male", "Female"];
@@ -127,6 +127,7 @@ class _UserformState extends State<UserForm> {
 
   }
 
+  final List<Color> appBarGradientColors = [Colors.red, Colors.deepOrange.shade300];
 
 
   @override
@@ -136,12 +137,48 @@ class _UserformState extends State<UserForm> {
 
     return Scaffold(
 
-      appBar: PreferredSize(preferredSize:Size.fromHeight(isAppBar ? MediaQuery.of(context).size.height*0.08 : 0),child: getAppBar()),
+      appBar: widget.isAppBar ? AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: appBarGradientColors,
+              begin: Alignment.topRight,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(15),
+            bottomRight: Radius.circular(15),
+          ),
+        ),
+        title: Text(
+          "Register",
+          style: GoogleFonts.nunito(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+            fontSize: 25,
+          ),
+        ),
+        actions: [
+
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutPage() ));
+              setState(() {});
+            },
+            icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
+            iconSize: 25,
+          ),
+        ],
+      ) : null,
+
 
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.teal.shade50, Colors.white],
+            colors: [Colors.red.shade50, Colors.deepOrange.shade50],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -171,6 +208,8 @@ class _UserformState extends State<UserForm> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
+                        fillColor: Colors.white,
+                        filled: true,
                         prefixIcon: Icon(Icons.person),
                       ),
                       textCapitalization: TextCapitalization.words,
@@ -200,6 +239,8 @@ class _UserformState extends State<UserForm> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
+                        fillColor: Colors.white,
+                        filled: true,
                         prefixIcon: Icon(Icons.email),
                       ),
                       onChanged: (value) {
@@ -225,6 +266,8 @@ class _UserformState extends State<UserForm> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
+                        fillColor: Colors.white,
+                        filled: true,
                         prefixIcon: Icon(Icons.phone_iphone_outlined),
                       ),
                       keyboardType: TextInputType.phone,
@@ -255,6 +298,8 @@ class _UserformState extends State<UserForm> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
+                          fillColor: Colors.white,
+                          filled: true,
                         prefixIcon: Icon(Icons.password_outlined),
                         suffixIcon: IconButton(onPressed: (){
                           setState(() {
@@ -286,6 +331,8 @@ class _UserformState extends State<UserForm> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
+                          fillColor: Colors.white,
+                          filled: true,
                         prefixIcon: Icon(Icons.password_outlined),
                         suffixIcon: IconButton(onPressed: (){
                             setState(() {
@@ -315,8 +362,10 @@ class _UserformState extends State<UserForm> {
                       controller: dobController,
                       readOnly: true, // Prevent manual input
                       decoration: InputDecoration(
+                        fillColor: Colors.white,
                         labelText: "Date of Birth",
                         errorText: dobError,
+                        filled: true,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
@@ -327,7 +376,7 @@ class _UserformState extends State<UserForm> {
                           context: context,
                           initialDate: selectedDate!,
                           firstDate: DateTime(1900),
-                          lastDate: DateTime(2005,12,31),
+                          lastDate: DateTime.now(),
                         );
 
                         if (pickedDate != null && pickedDate != selectedDate) {
@@ -374,21 +423,21 @@ class _UserformState extends State<UserForm> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                                 decoration: BoxDecoration(
-                                  color: _selectedRadio == 0 ? Colors.teal : Colors.white,
+                                  color: _selectedRadio == 0 ? Colors.deepOrange.shade400 : Colors.white,
                                   borderRadius: BorderRadius.circular(8.0),
-                                  border: Border.all(color: Colors.teal),
+                                  border: Border.all(color: Colors.deepOrange),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.male,
-                                      color: _selectedRadio == 0 ? Colors.white : Colors.teal,
+                                      color: _selectedRadio == 0 ? Colors.white : Colors.deepOrange,
                                     ),
                                     SizedBox(width: 8),
                                     Text(
                                       "Male",
                                       style: TextStyle(
-                                        color: _selectedRadio == 0 ? Colors.white : Colors.teal,
+                                        color: _selectedRadio == 0 ? Colors.white : Colors.deepOrange,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -409,21 +458,21 @@ class _UserformState extends State<UserForm> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                                 decoration: BoxDecoration(
-                                  color: _selectedRadio == 1 ? Colors.teal : Colors.white,
+                                  color: _selectedRadio == 1 ? Colors.deepOrange.shade400 : Colors.white,
                                   borderRadius: BorderRadius.circular(8.0),
-                                  border: Border.all(color: Colors.teal),
+                                  border: Border.all(color: Colors.deepOrange),
                                 ),
                                 child: Row(
                                   children: [
                                     Icon(
                                       Icons.female,
-                                      color: _selectedRadio == 1 ? Colors.white : Colors.teal,
+                                      color: _selectedRadio == 1 ? Colors.white : Colors.deepOrange,
                                     ),
                                     SizedBox(width: 8),
                                     Text(
                                       "Female",
                                       style: TextStyle(
-                                        color: _selectedRadio == 1 ? Colors.white : Colors.teal,
+                                        color: _selectedRadio == 1 ? Colors.white : Colors.deepOrange,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -444,7 +493,6 @@ class _UserformState extends State<UserForm> {
                       ],
                     ),
                   ),
-
 
                   //select city
                   Container(
@@ -489,11 +537,10 @@ class _UserformState extends State<UserForm> {
                       validator: (value) => value == null ? "Please select a city" : null, // Validation
                     ),
                   ),
-
                   getCityError(),
 
                   //Hobbies
-                Container(
+                  Container(
                   width: screenWidth*0.9,
                   margin: EdgeInsets.all(screenWidth*0.025),
                   alignment: Alignment.centerLeft,
@@ -511,7 +558,8 @@ class _UserformState extends State<UserForm> {
                           return FilterChip(
                             label: Text(hobby["name"]),
                             selected: hobby["isChecked"],
-                            selectedColor: Colors.teal.shade100,
+                            backgroundColor: Colors.white,
+                            selectedColor: Colors.deepOrange.shade100,
                             onSelected: (bool selected) {
                               setState(() {
                                 hobby["isChecked"] = selected;
@@ -539,7 +587,31 @@ class _UserformState extends State<UserForm> {
 
                     child: ElevatedButton(
                       style: ButtonStyle(
+                        animationDuration: const Duration(milliseconds: 200),
 
+                        backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                              (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed)) {
+                              return Colors.deepOrange;
+                            }
+                            return Colors.deepOrange; // Default color
+                          },
+                        ),
+
+                        overlayColor: MaterialStateProperty.all(
+                          Colors.white.withOpacity(0.2),
+                        ),
+
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+
+                        // Customize the button's shape.
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
                       ),
                       onPressed: () {
 
@@ -655,7 +727,7 @@ class _UserformState extends State<UserForm> {
                         }
                       },
 
-                      child: Text("Save"),
+                      child: Text("Save",style: TextStyle(color: Colors.white),),
                     ),
                   )
                 ],
@@ -695,57 +767,43 @@ class _UserformState extends State<UserForm> {
     );
   }
 
-  Widget getAppBar(){
-    if(widget.userDetail!=null){
-      isAppBar = true;
-      return PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.teal.shade400,
-                Colors.teal.shade600,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: AppBar(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
-
-                )
-            ),
-            centerTitle: true,
-            title: Text(
-              "Matrimony",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(color: Colors.white , fontWeight:FontWeight.w700,fontSize: 25),
-            ),
-            backgroundColor: Colors.transparent,
-            actions: [
-              Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: IconButton(onPressed: (){
-                    setState(() {
-
-                      // GlobalData.searchBarState = true;
-                      // pages[0] = UserList();
-                    });
-                  }, icon: Icon(Icons.search_outlined,color: Colors.white),iconSize: 25,)
-              )
-            ],
-          ),
-        ),
-      );
-    }else{
-      isAppBar = false;
-      return SizedBox.shrink();
-    }
-  }
+  // Widget getAppBar(){
+  //     return PreferredSize(
+  //       preferredSize: Size.fromHeight(0.08),
+  //       child: Container(
+  //         decoration: BoxDecoration(
+  //           gradient: LinearGradient(
+  //             colors: [
+  //               Colors.teal.shade400,
+  //               Colors.teal.shade600,
+  //             ],
+  //             begin: Alignment.topLeft,
+  //             end: Alignment.bottomRight,
+  //           ),
+  //         ),
+  //         child: AppBar(
+  //           shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.only(
+  //                 bottomLeft: Radius.circular(15),
+  //                 bottomRight: Radius.circular(15),
+  //
+  //               )
+  //           ),
+  //           centerTitle: true,
+  //           title: Text(
+  //             "Matrimony",
+  //             textAlign: TextAlign.center,
+  //             style: GoogleFonts.nunito(color: Colors.white , fontWeight:FontWeight.w700,fontSize: 25),
+  //           ),
+  //           backgroundColor: Colors.transparent,
+  //           actions: [
+  //
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //
+  // }
 
   Widget getRadioButtonError() {
     if (genderError != null) {

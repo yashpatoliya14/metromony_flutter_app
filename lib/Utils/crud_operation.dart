@@ -45,9 +45,9 @@ class User {
           );
         }, onUpgrade: (db, oldVersion, newVersion) async{
           if (oldVersion<newVersion){
-            await db.execute('''
-               ALTER TABLE $USERTABLE ADD COLUMN $AGE INTEGER
-            ''');
+
+
+
           }
         }, version: 11);
     return db;
@@ -215,22 +215,19 @@ class User {
 
   }
 
-  static List<Map<String, dynamic>> searchDetail({required String searchData}) {
-    List<Map<String, dynamic>> searchList = [];
-
-
-    String normalizedSearchData = searchData.toLowerCase();
-
-    for (var element in userList) {
-      if (element[FULLNAME].toString().toLowerCase().contains(normalizedSearchData) ||
-          element[CITY].toString().toLowerCase().contains(normalizedSearchData) ||
-          element[EMAIL].toString().toLowerCase().contains(normalizedSearchData)) {
-        searchList.add(element);
-      }
+  Future<Map<String , dynamic>?> getUserForLogin({required String mobile,required String password}) async {
+    try{
+      Database db = await initDatabase();
+      int mobileno = int.parse(mobile);
+      List<Map<String, dynamic>> result = await db.rawQuery('''
+        Select * from $USERTABLE 
+        where $MOBILE = ? and $PASSWORD = ?
+      ''', [mobileno, password]);
+        return result[0];
+    }catch(error){
+      print("Error : ");
+      print(error);
     }
-
-    return searchList;
   }
-
 }
 

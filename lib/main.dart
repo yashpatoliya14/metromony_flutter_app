@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:metromony/Crud.dart';
-import 'package:metromony/Home.dart';
-import 'package:metromony/LaunchPage.dart';
-import 'package:metromony/UserForm.dart';
+import 'package:metromony/Utils/crud_operation.dart';
+import 'package:metromony/home.dart';
+import 'package:metromony/launch_page.dart';
+import 'package:metromony/Userform/user_form.dart';
 import 'package:provider/provider.dart';
 
 void main() {

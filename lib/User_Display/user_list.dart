@@ -1,15 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:metromony/UserDetail.dart';
-import 'package:metromony/UserForm.dart';
-import 'package:metromony/standard.dart';
-import './Crud.dart';
-import 'package:shimmer/shimmer.dart';
-
+import 'package:metromony/User_Display/user_detail.dart';
+import 'package:metromony/Userform/user_form.dart';
+import 'package:metromony/Utils/standard.dart';
+import '../Utils/crud_operation.dart';
 
 class UserList extends StatefulWidget {
-  final User user = User(); // Assume CrudUser class is passed
+  final User user = User();
   bool search;
   UserList({super.key,required this.search});
 
@@ -22,12 +20,10 @@ class _UserListState extends State<UserList> {
   List<Map<String, dynamic>> userList = [];
   TextEditingController searchController = TextEditingController();
   List<double> _scaleFactors = [];
-
   @override
   void initState() {
     super.initState();
   }
-
   Future<List<Map<String, dynamic>>> _getUserData() async {
     userList =  await widget.user.getUserList();
     return userList;
@@ -56,30 +52,9 @@ class _UserListState extends State<UserList> {
                         ? userList.length
                         : searchList.length,
                   );
-                }else if (snapshot.connectionState==ConnectionState.waiting){
-                   return ListView.builder(
-                     itemCount: userList.length,
-                     itemBuilder: (context, index) {
-                       return Padding(
-                         padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 10.0),
-                         child: Shimmer.fromColors(
-                           baseColor: Colors.grey[300]!,
-                           highlightColor: Colors.grey[100]!,
-                           child: Container(
-                             height: 80,
-                             decoration: BoxDecoration(
-                               color: Colors.white,
-                               borderRadius: BorderRadius.circular(10),
-                             ),
-                           ),
-                         ),
-                       );
-                     },
-                   );
-                 }
-                 else {
+                } else {
                   return Center(child: Text('No users found'));
-                }
+                 }
               },
             ),
           )
@@ -95,19 +70,26 @@ class _UserListState extends State<UserList> {
       padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context){
-              return UserDetail(data: userList[index]);
-          }));
+
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => UserDetail(data: userList[index]),
+              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                return FadeTransition(
+                  opacity: animation,
+                  child: child,
+                );
+              },
+            ),
+          );
+
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 0.20,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.teal.shade50,
-                Colors.teal.shade100,
-              ],
+              colors: [Colors.red.shade50, Colors.deepOrange.shade100],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -138,12 +120,13 @@ class _UserListState extends State<UserList> {
                           Container(
                             width: MediaQuery.of(context).size.width * 0.5,
                             child: Text(
+
                               currentList[index][FULLNAME],
                               style: GoogleFonts.nunito(
-                                  fontSize: 20, color: Colors.teal.shade400),
+                                  fontSize: 20, color:Colors.deepOrange.shade300),
                             ),
                           ),
-                          const Icon(Icons.arrow_forward_ios, color: Colors.teal),
+                          const Icon(Icons.arrow_forward_ios, color: Colors.deepOrange),
                         ],
                       ),
                       const SizedBox(height: 5),
@@ -199,7 +182,7 @@ class _UserListState extends State<UserList> {
 
 
                               icon: Icon((searchController.text.isEmpty ? userList[index][ISFAVORITE] : searchList[index][ISFAVORITE])==1? Icons.favorite : Icons.favorite_outline,
-                                  size: 20, color: (searchController.text.isEmpty ? userList[index][ISFAVORITE] : searchList[index][ISFAVORITE])==1 ? Colors.red : Colors.teal),
+                                  size: 20, color: (searchController.text.isEmpty ? userList[index][ISFAVORITE] : searchList[index][ISFAVORITE])==1 ? Colors.red : Colors.deepOrange),
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all<EdgeInsets>(
                                     EdgeInsets.zero),
@@ -211,16 +194,18 @@ class _UserListState extends State<UserList> {
                             height: 25,
                             child: ElevatedButton.icon(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserForm(
-                                        userDetail: searchController.text.isEmpty ? userList[index] : searchList[index]),
+                                Navigator.of(context).push(
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) => UserForm(userDetail: searchController.text.isEmpty ? userList[index] : searchList[index],isAppBar: true,),
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: child,
+                                      );
+                                    },
                                   ),
                                 ).then((value){
-                                    setState(() {
-
-                                    });
+                                    setState(() {});
                                 });
                               },
                               icon: const Icon(Icons.edit,
@@ -234,7 +219,7 @@ class _UserListState extends State<UserList> {
                                 padding: MaterialStateProperty.all<EdgeInsets>(
                                     EdgeInsets.zero),
                                 backgroundColor: MaterialStateProperty.all<Color>(
-                                    Colors.teal),
+                                    Colors.deepOrange.shade500),
                               ),
                             ),
                           ),
@@ -250,7 +235,7 @@ class _UserListState extends State<UserList> {
                                   context: context,
                                   builder: (context) {
                                     return CupertinoAlertDialog(
-                                      title: Text('DELETE',style: GoogleFonts.nunito(color: Colors.red.shade900),),
+                                      title: Text('DELETE',style: GoogleFonts.nunito(color: Colors.red.shade500),),
                                       content: Text('Are you sure want to delete?',style: GoogleFonts.nunito(),),
                                       actions: [
                                         TextButton(
@@ -273,17 +258,17 @@ class _UserListState extends State<UserList> {
                                 );
                               },
                               icon: const Icon(Icons.delete,
-                                  size: 15, color: Colors.white),
+                                  size: 15, color: Colors.red),
                               label: Text(
                                 "Delete",
                                 style: GoogleFonts.nunito(
-                                    fontSize: 12, color: Colors.white),
+                                    fontSize: 12, color: Colors.red),
                               ),
                               style: ButtonStyle(
                                 padding: MaterialStateProperty.all<EdgeInsets>(
                                     EdgeInsets.zero),
                                 backgroundColor: MaterialStateProperty.all<Color>(
-                                    Colors.red.shade900),
+                                    Colors.white),
                               ),
                             ),
                           )
@@ -301,47 +286,66 @@ class _UserListState extends State<UserList> {
   }
 
   Widget isSearchBarHide() {
-    if (widget.search) {
-      return Row(
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 300), // Smooth animation duration
+      transitionBuilder: (child, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: animation,
+            // axisAlignment: -1.0,
+            child: child,
+          ),
+        );
+      },
+      child: widget.search
+          ? Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             width: MediaQuery.of(context).size.width * 0.95,
+            height: MediaQuery.of(context).size.height * 0.07,
             child: TextFormField(
               controller: searchController,
               decoration: InputDecoration(
-                hintText: "search",
+                fillColor: Colors.grey.shade100,
+                filled: true,
+                hintText: "Search",
                 suffixIcon: IconButton(
                   onPressed: () {
                     setState(() {
-                      searchController.text='';
+                      searchController.clear();
                       widget.search = false;
                     });
                   },
                   icon: const Icon(Icons.close),
                 ),
+                prefixIcon: const Icon(Icons.search),
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.all(Radius.circular(25)),
+                ),
               ),
-                onChanged: (value) {
-                  String searchData = value.toLowerCase();
-                  setState(() {
-                    searchList = userList.where((user) {
-                      return user[FULLNAME].toString().toLowerCase().contains(searchData) ||
-                          user[CITY].toString().toLowerCase().contains(searchData) ||
-                          user[EMAIL].toString().toLowerCase().contains(searchData) ||
-                          user[MOBILE].toString().toLowerCase().contains(searchData) ||
-                          user[AGE].toString().toLowerCase().contains(searchData);
-                    }).toList();
-                  });
-                },
-
+              onChanged: (value) {
+                String searchData = value.toLowerCase();
+                setState(() {
+                  searchList = userList.where((user) {
+                    return user[FULLNAME].toString().toLowerCase().contains(searchData) ||
+                        user[CITY].toString().toLowerCase().contains(searchData) ||
+                        user[EMAIL].toString().toLowerCase().contains(searchData) ||
+                        user[MOBILE].toString().toLowerCase().contains(searchData) ||
+                        user[AGE].toString().toLowerCase().contains(searchData);
+                  }).toList();
+                });
+              },
             ),
           ),
         ],
-      );
-    } else {
-      return const SizedBox.shrink();
-    }
+      )
+          : const SizedBox.shrink(),
+    );
   }
+
 
   PreferredSizeWidget? getAppBar() {
     return PreferredSize(

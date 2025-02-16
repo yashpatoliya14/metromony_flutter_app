@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:metromony/UserDetail.dart';
-import 'package:metromony/UserForm.dart';
-import 'package:metromony/standard.dart';
-import './Crud.dart';
+import 'package:metromony/User_Display/user_detail.dart';
+import 'package:metromony/Userform/user_form.dart';
+import 'package:metromony/Utils/standard.dart';
+import '../Utils/crud_operation.dart';
 
 class Favoritelist extends StatefulWidget {
+
   Favoritelist({super.key});
 
   @override
@@ -92,10 +93,7 @@ class _UserListState extends State<Favoritelist> {
           height: MediaQuery.of(context).size.height * 0.20,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.teal.shade50,
-                Colors.teal.shade100,
-              ],
+              colors: [Colors.red.shade50, Colors.deepOrange.shade100],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
