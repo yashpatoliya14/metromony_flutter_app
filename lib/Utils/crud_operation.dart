@@ -8,8 +8,8 @@ class User {
   static bool searchBarState = false;
   static List<Map<String, dynamic>> userList = [];
   Future<Database> initDatabase() async {
-    var db = await openDatabase('matrimony2.db',
-        onCreate: (db, version) async{
+    var db = await openDatabase('matrimony3.db',
+        onCreate: (db, version) async {
           await db.execute(
               'CREATE TABLE $USERTABLE('
                   'UserId INTEGER PRIMARY KEY AUTOINCREMENT, '
@@ -20,36 +20,39 @@ class User {
                   '$CITY TEXT, '
                   '$GENDER TEXT, '
                   '$PASSWORD TEXT, '
-                  '$ISFAVORITE INTEGER'
+                  '$ISFAVORITE INTEGER, '
+                  '$AGE INTEGER'
                   ')'
           );
           await db.execute(
               '''
-                  CREATE TABLE $HOBBIESTABLE (
-                    HobbyId INTEGER PRIMARY KEY AUTOINCREMENT,
-                    $HOBBY TEXT UNIQUE
-                  )  
-                '''
+            CREATE TABLE $HOBBIESTABLE (
+              HobbyId INTEGER PRIMARY KEY AUTOINCREMENT,
+              $HOBBY TEXT UNIQUE
+            )  
+          '''
           );
 
           await db.execute(
               '''
-                  CREATE TABLE $USER_HOBBIESTABLE (
-                    UserId INTEGER, 
-                    HobbyId INTEGER, 
-                    PRIMARY KEY (UserId, HobbyId),
-                    FOREIGN KEY (UserId) REFERENCES $USERTABLE(UserId) ON DELETE CASCADE,
-                    FOREIGN KEY (HobbyId) REFERENCES $HOBBIESTABLE(HobbyId) ON DELETE CASCADE
-                  )  
-                '''
+            CREATE TABLE $USER_HOBBIESTABLE (
+              UserId INTEGER, 
+              HobbyId INTEGER, 
+              PRIMARY KEY (UserId, HobbyId),
+              FOREIGN KEY (UserId) REFERENCES $USERTABLE(UserId) ON DELETE CASCADE,
+              FOREIGN KEY (HobbyId) REFERENCES $HOBBIESTABLE(HobbyId) ON DELETE CASCADE
+            )  
+          '''
           );
-        }, onUpgrade: (db, oldVersion, newVersion) async{
-          if (oldVersion<newVersion){
-
-
-
+        },
+        onUpgrade: (db, oldVersion, newVersion) async {
+          if (oldVersion < 2) {
+            await db.execute('''
+            ALTER TABLE $USERTABLE ADD COLUMN $AGE INTEGER
+          ''');
           }
-        }, version: 11);
+        },
+        version: 2);
     return db;
   }
 

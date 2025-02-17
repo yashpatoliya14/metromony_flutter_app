@@ -7,10 +7,13 @@ import 'package:metromony/User_Display/user_list.dart';
 import 'package:animations/animations.dart';
 import 'package:metromony/Utils/importFiles.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Ensure this dependency is added
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final int index;
+
+  // Constructor with a default value for index if null
+  Home({super.key, this.index = 0});
 
   @override
   State<Home> createState() => _HomeState();
@@ -23,18 +26,18 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-
+    // Initialize _currentIndex with widget.index if passed, else default to 0
+    _currentIndex = widget.index;
   }
 
   @override
   Widget build(BuildContext context) {
     final List<Color> bottomGradientColors = [Colors.red, Colors.deepOrange.shade300];
-
     final List<Color> appBarGradientColors = [Colors.red, Colors.deepOrange.shade300];
 
     final List<Widget> pages = [
       UserList(search: isSearchBar),
-      UserForm(isAppBar: false,),
+      UserForm(isAppBar: false),
       Favoritelist(),
     ];
 
@@ -48,7 +51,7 @@ class _HomeState extends State<Home> {
             child: child,
           );
         },
-        child: pages[_currentIndex],
+        child: pages[_currentIndex], // Use _currentIndex here
       ),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.08),
@@ -77,7 +80,6 @@ class _HomeState extends State<Home> {
             ),
           ),
           actions: [
-
             IconButton(
               onPressed: () {
                 setState(() {
@@ -90,8 +92,7 @@ class _HomeState extends State<Home> {
             ),
             IconButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutPage() ));
-                setState(() {});
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AboutPage()));
               },
               icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
               iconSize: 25,
@@ -110,9 +111,8 @@ class _HomeState extends State<Home> {
         ),
         child: NavigationBarTheme(
           data: NavigationBarThemeData(
-            elevation: 0, // No elevation on tap
+            elevation: 0,
             indicatorColor: Colors.transparent,
-            indicatorShape: null,
             labelTextStyle: MaterialStateProperty.resolveWith<TextStyle>((states) {
               return GoogleFonts.nunito(
                 fontSize: 12,

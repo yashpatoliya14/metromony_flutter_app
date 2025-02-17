@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:metromony/User_Display/about_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:metromony/home.dart';
 import '../Utils/importFiles.dart';
 import 'package:intl/intl.dart';
 class UserForm extends StatefulWidget {
@@ -691,7 +692,6 @@ class _UserformState extends State<UserForm> {
                                 );
                               }).then((value){
                                 Navigator.pop(context,data);
-
                               });
 
                             }
@@ -705,6 +705,8 @@ class _UserformState extends State<UserForm> {
                                     TextButton(
                                       onPressed: () async {
                                         Navigator.pop(context,data);
+                                        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>Home(index: 0,)));
+                                        
                                       },
                                       child: Text('Done',style: GoogleFonts.nunito(),),
                                     ),
@@ -766,44 +768,6 @@ class _UserformState extends State<UserForm> {
       },
     );
   }
-
-  // Widget getAppBar(){
-  //     return PreferredSize(
-  //       preferredSize: Size.fromHeight(0.08),
-  //       child: Container(
-  //         decoration: BoxDecoration(
-  //           gradient: LinearGradient(
-  //             colors: [
-  //               Colors.teal.shade400,
-  //               Colors.teal.shade600,
-  //             ],
-  //             begin: Alignment.topLeft,
-  //             end: Alignment.bottomRight,
-  //           ),
-  //         ),
-  //         child: AppBar(
-  //           shape: RoundedRectangleBorder(
-  //               borderRadius: BorderRadius.only(
-  //                 bottomLeft: Radius.circular(15),
-  //                 bottomRight: Radius.circular(15),
-  //
-  //               )
-  //           ),
-  //           centerTitle: true,
-  //           title: Text(
-  //             "Matrimony",
-  //             textAlign: TextAlign.center,
-  //             style: GoogleFonts.nunito(color: Colors.white , fontWeight:FontWeight.w700,fontSize: 25),
-  //           ),
-  //           backgroundColor: Colors.transparent,
-  //           actions: [
-  //
-  //           ],
-  //         ),
-  //       ),
-  //     );
-  //
-  // }
 
   Widget getRadioButtonError() {
     if (genderError != null) {

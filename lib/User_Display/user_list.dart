@@ -26,6 +26,7 @@ class _UserListState extends State<UserList> {
   }
   Future<List<Map<String, dynamic>>> _getUserData() async {
     userList =  await widget.user.getUserList();
+    userList = userList.reversed.toList();
     return userList;
   }
 
@@ -235,43 +236,50 @@ class _UserListState extends State<UserList> {
                                   context: context,
                                   builder: (context) {
                                     return CupertinoAlertDialog(
-                                      title: Text('DELETE',style: GoogleFonts.nunito(color: Colors.red.shade500),),
-                                      content: Text('Are you sure want to delete?',style: GoogleFonts.nunito(),),
+                                      title: Text('DELETE', style: GoogleFonts.nunito(color: Colors.red.shade500)),
+                                      content: Text('Are you sure want to delete?', style: GoogleFonts.nunito()),
                                       actions: [
                                         TextButton(
                                           onPressed: () async {
-                                            await widget.user.deleteUser(id: userList[index]['UserId']); // Assuming 'id' is the identifier
+                                            Map<String, dynamic> userToDelete =
+                                            searchController.text.isEmpty ? userList[index] : searchList[index];
+
+                                            await widget.user.deleteUser(id: userToDelete['UserId']);
+
+                                            setState(() {
+                                              if (searchController.text.isEmpty) {
+                                                userList.toList().removeAt(index);
+                                              } else {
+                                                searchList.removeAt(index);
+                                              }
+                                            });
                                             Navigator.pop(context);
-                                            setState(() {}); // Refresh the list after deletion
                                           },
-                                          child: Text('Yes',style: GoogleFonts.nunito(),),
+                                          child: Text('Yes', style: GoogleFonts.nunito()),
                                         ),
                                         TextButton(
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: Text('No',style: GoogleFonts.nunito()),
-                                        )
+                                          child: Text('No', style: GoogleFonts.nunito()),
+                                        ),
                                       ],
                                     );
                                   },
                                 );
                               },
-                              icon: const Icon(Icons.delete,
-                                  size: 15, color: Colors.red),
+                              icon: const Icon(Icons.delete, size: 15, color: Colors.red),
                               label: Text(
                                 "Delete",
-                                style: GoogleFonts.nunito(
-                                    fontSize: 12, color: Colors.red),
+                                style: GoogleFonts.nunito(fontSize: 12, color: Colors.red),
                               ),
                               style: ButtonStyle(
-                                padding: MaterialStateProperty.all<EdgeInsets>(
-                                    EdgeInsets.zero),
-                                backgroundColor: MaterialStateProperty.all<Color>(
-                                    Colors.white),
+                                padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.zero),
+                                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
                               ),
                             ),
                           )
+
                         ],
                       ),
                     ],
